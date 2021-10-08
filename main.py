@@ -7,6 +7,10 @@ while count<128:
     count=0
     seed = secrets.randbits(128)
     print(seed)
+    print(type(seed))
+
+
+
 
     genEntropy = bin(seed)[2:]
     print(genEntropy)
@@ -34,3 +38,11 @@ entropy = genEntropy + checkSum
 print(entropy)
 print(len(entropy))
 
+with open("wordList.txt", 'r') as list:
+    wordList = [w.strip() for w in list.readlines()]
+
+seed = []
+for i in range(0,12,1):
+    index = int(entropy[11*i:11*(i+1)],2)
+    seed.append(wordList[index])
+print(seed)
