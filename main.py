@@ -1,48 +1,52 @@
 import secrets
 import hashlib
+import os
+clearConsole = lambda: os.system('cls' if os.name in ('nt', 'dos') else 'clear')
+clearConsole()
 
-count=0
-while count<128:
-#Boucle qui réessaye tant que la seed en binaire ne contient pas 128 bits
-    count=0
-    seed = secrets.randbits(128)
-    print(seed)
-    print(type(seed))
+def creationGenEntropy ():
+    count = 0
+    while count < 128:
+        # Boucle qui réessaye tant que la seed en binaire ne contient pas 128 bits
+        count = 0
+        seed = secrets.randbits(128)
 
+        genEntropy = bin(seed)[2:]
 
+        for i in genEntropy:
+            count += 1
+    return genEntropy
 
+def sha256 (genEntropy):
+    seedEnc = genEntropy.encode()
+    seedHash = hashlib.sha256(seedEnc)
 
-    genEntropy = bin(seed)[2:]
-    print(genEntropy)
+    int_seedHash = int(seedHash.hexdigest(), base=16)
 
-    for i in genEntropy:
-        count += 1
+    hash = bin(int_seedHash)[2:]
+    return hash
 
-print(count)
+def creationEntropy (genEntropy, hash):
+    checkSum = ""
+    for i in range(0, 4):
+        checkSum += hash[i]
 
-seedEnc = genEntropy.encode()
-seedHash = hashlib.sha256(seedEnc)
-print(seedHash.hexdigest())
+    entropy = genEntropy + checkSum
+    return entropy
 
-int_seedHash = int(seedHash.hexdigest(), base=16)
+def creationMnemonic (entropy):
+    with open("wordList.txt", 'r') as list:
+        wordList = [w.strip() for w in list.readlines()]
 
-seedHash2 = bin(int_seedHash)[2:]
-print(seedHash2)
+    mnemonic = ""
+    for i in range(0, 12, 1):
+        index = int(entropy[11 * i:11 * (i + 1)], 2)
+        mnemonic = mnemonic + wordList[index] + " "
+    return mnemonic
 
-checkSum = ""
-for i in range(0,4) :
-    checkSum += seedHash2[i]
-print(checkSum)
-
-entropy = genEntropy + checkSum
-print(entropy)
-print(len(entropy))
-
-with open("wordList.txt", 'r') as list:
-    wordList = [w.strip() for w in list.readlines()]
-
-seed = []
-for i in range(0,12,1):
-    index = int(entropy[11*i:11*(i+1)],2)
-    seed.append(wordList[index])
-print(seed)
+if __name__ == '__main__':
+    genEntropy = creationGenEntropy()
+    hash = sha256(genEntropy)
+    entropy = creationEntropy(genEntropy, hash)
+    mnemonic = creationMnemonic(entropy)
+    print("The twelve word mnemonic code created is : \n" + mnemonic)
