@@ -8,10 +8,14 @@ def creationGenEntropy ():
     count = 0
     while count < 128:
         # Boucle qui réessaye tant que la seed en binaire ne contient pas 128 bits
+        clearConsole = lambda: os.system('cls' if os.name in ('nt', 'dos') else 'clear')
+        clearConsole()
+
         count = 0
         seed = secrets.randbits(128)
 
         genEntropy = bin(seed)[2:]
+        print("The GenEntropy in binary is :\n" + genEntropy)
 
         for i in genEntropy:
             count += 1
@@ -49,4 +53,4 @@ if __name__ == '__main__':
     hash = sha256(genEntropy)
     entropy = creationEntropy(genEntropy, hash)
     mnemonic = creationMnemonic(entropy)
-    print("The twelve word mnemonic code created is : \n" + mnemonic)
+    print("\nThe twelve word mnemonic code created is : \n" + mnemonic)
