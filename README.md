@@ -1,1 +1,2 @@
-# TD2 de Blockchain Programming (Samuel Barbarin et Nicolas Dumont)
+# TD2 de Blockchain Programming
+(Samuel Barbarin et Nicolas Dumont)
